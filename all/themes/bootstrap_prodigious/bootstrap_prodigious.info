@@ -1,5 +1,5 @@
-name = Bootstrap Sub-theme
-description = A Bootstrap Sub-theme.
+name = Bootstrap Sub-theme - Prodigious
+description = A Bootstrap-Prodigiuos Sub-theme.
 core = 7.x
 base theme = bootstrap
 
