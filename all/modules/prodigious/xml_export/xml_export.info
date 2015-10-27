@@ -1,2 +1,5 @@
 name = xml export
 description = export customer report to xml file
+core = 7.x
+;package = prodigiuos
+version = "7.x-1.x"
