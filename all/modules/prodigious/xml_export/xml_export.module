@@ -1,1 +1,154 @@
 <?php
+
+/**
+ * Modulo para pintar reportes
+ */
+function xml_export_menu() {
+
+  $items['reports'] = array(
+    'title' => 'Reports',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('reportes_xml'),
+    'access callback' => TRUE,
+    'type' => MENU_CALLBACK,
+    );
+
+  return $items;
+}
+
+/**
+ *  reports function
+ */
+function reportes_xml($form, &$form_state) {
+$types = array('Monthly sales', 'Invoices by client','Cupcakes ranking sales');
+  $form['user_data'] = array(
+    '#type' => 'fieldset',
+    );
+
+  $form['user_data']['reportes'] = array(
+   '#title' => t('Report types'),
+   '#type' => 'item',
+   '#description' => t('Available reports'),
+   );
+
+  $form['user_data']['filter'] = array(
+    '#type' => 'select',
+    '#empty_option' => 'Select one',
+    '#options' => $types,
+    '#ajax' => array(
+      'callback' => 'filter_select_callback',
+      'wrapper' => 'table-wrapper'
+      )
+    );
+
+  $form['table_wrapper'] = array(
+    '#type' => 'markup',
+    '#prefix' => '<div  id="table-wrapper">',
+    '#suffix' => '</div>',
+    );
+
+  if(isset($form_state['values']['filter'])) {
+    $header = array();
+    $rows = array();
+
+    switch ($form_state['values']['filter']) {
+
+      case 0:
+        $header = array();
+         $resultado = db_query("SELECT * FROM users");
+
+        foreach ($resultado as $value) {
+        $rows[] = array();
+        }
+
+        break;
+      case 1:
+        $header = array();
+         $query = db_query();
+
+
+        foreach ($query as $key => $value) {
+                $rows[] = array();
+        }
+        break;
+
+        case 2:
+        $header = array();
+         $query = db_query();
+        foreach ($query as $key => $value) {
+        $rows[] = array();
+        }
+        break;
+       case 3:
+       $header = array();
+        $query = db_query();
+
+        $rows[] = array();
+        }
+        break;
+    
+
+    $form['table_wrapper']['table'] = array(
+      '#theme' => 'table',
+      '#header' => $header,
+      '#rows' => (array)$rows,
+      '#prefix' => '<div class="table-responsive">',
+      '#suffix' => '</div>',
+      );
+    $form_state['headers']= $header;
+    $form_state['rows']= $rows;
+    $form_state['report_type']= $report_type[$form_state['values']['filter']];
+
+    $form['table_wrapper']['submit'] = array(
+    '#type' => 'submit',
+    '#submit' => array('download_report',),
+    '#value' => 'File export',
+  );
+  }
+  $form['#submit'] = array();
+  return $form;
+
+  }
+
+function filter_select_callback($form, &$form_state) {
+  return $form['table_wrapper'];
+}
+
+
+function report_export_csv($headers, $values){
+  if(count($values) == 0){
+    return null;
+  }
+  ob_start();
+  $df = fopen("php://output", "w");
+  fputcsv($df, $headers,';');
+  foreach ($values as $value) {
+    fputcsv($df, $value, ';');
+  }
+  fclose($df);
+  return ob_get_clean();
+}
+
+function report_setup($filename){
+  $now = gmdate('D, d M Y H:i:s');
+  header("Cache-control:max-age=0, no-cache, must-relavalidate, proxy-revalidate");
+  header("Last-Modified: {$now} GMT");
+  header("Conten-type: application/force-download");
+  header("Conten-type: application/octet-stream");
+  header("Conten-type: application/download");
+  header("Content-Disposition: attachment; filename={$filename}");
+  header("Conten-Transfer-Encoding: binary");
+}
+
+function download_report($form, &$form_state){
+  if(empty($form_state['report_type']) || count($form_state['headers']) == 0 || count($form_state['rows']) == 0){
+    return;
+  }
+
+  report_setup('report_'.$form_state['report_type'].'_'.date('Y-m-d').".csv");
+  echo report_export_csv($form_state['headers'],  $form_state['rows']);
+  die();
+}
+
+
+
