@@ -54,36 +54,36 @@ $types = array('Monthly sales', 'Invoices by client','Cupcakes ranking sales');
     switch ($form_state['values']['filter']) {
 
       case 0:
-        $header = array('Order #', 'User', 'status', 'Value');
+        $header = array('Montly sales');
          $resultado = db_query("SELECT * FROM commerce_order");
 
         foreach ($resultado as $value) {
-        $rows[] = array($value->order_number, $value->uid, $value->status);
+        $rows[] = array($value->order_number, $value->data);
         }
 
         break;
       case 1:
-        $header = array('Order #', 'User', 'status', 'Value');
-         $query = db_query();
+        $header = array('Invoices by client');
+         $query = db_query("SELECT * FROM commerce_order_revision");
 
 
         foreach ($query as $key => $value) {
-                $rows[] = array();
+                $rows[] = array($value->uid, $value->data);
         }
         break;
 
         case 2:
-        $header = array('Order #', 'User', 'status', 'Value');
-         $query = db_query();
+        $header = array('Products ranking sales');
+         $query = db_query("SELECT * FROM commerce_line_item");
         foreach ($query as $key => $value) {
-        $rows[] = array();
+        $rows[] = array($value->order_number, $value->data);
         }
         break;
        default:
        $header = array('Order #', 'User', 'status', 'Value');
-        $query = db_query();
+        $query = db_query("SELECT * FROM commerce_order");
         foreach ($query as $key => $value) {
-        $rows[] = array();
+        $rows[] = array($value->order_number, $value->uid, $value->status);
         }
         break;
     
@@ -97,7 +97,7 @@ $types = array('Monthly sales', 'Invoices by client','Cupcakes ranking sales');
       );
     $form_state['headers']= $header;
     $form_state['rows']= $rows;
-    $form_state['report_type']= $report_type[$form_state['values']['filter']];
+    $form_state['report_type']= $types[$form_state['values']['filter']];
 
     $form['table_wrapper']['submit'] = array(
     '#type' => 'submit',
