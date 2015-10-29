@@ -54,16 +54,16 @@ $types = array('Monthly sales', 'Invoices by client','Cupcakes ranking sales');
     switch ($form_state['values']['filter']) {
 
       case 0:
-        $header = array();
-         $resultado = db_query("SELECT * FROM users");
+        $header = array('Order #', 'User', 'status', 'Value');
+         $resultado = db_query("SELECT * FROM commerce_order");
 
         foreach ($resultado as $value) {
-        $rows[] = array();
+        $rows[] = array($value->order_number, $value->uid, $value->status);
         }
 
         break;
       case 1:
-        $header = array();
+        $header = array('Order #', 'User', 'status', 'Value');
          $query = db_query();
 
 
@@ -73,21 +73,21 @@ $types = array('Monthly sales', 'Invoices by client','Cupcakes ranking sales');
         break;
 
         case 2:
-        $header = array();
+        $header = array('Order #', 'User', 'status', 'Value');
          $query = db_query();
         foreach ($query as $key => $value) {
         $rows[] = array();
         }
         break;
-       case 3:
-       $header = array();
+       default:
+       $header = array('Order #', 'User', 'status', 'Value');
         $query = db_query();
-
+        foreach ($query as $key => $value) {
         $rows[] = array();
         }
         break;
     
-
+    }
     $form['table_wrapper']['table'] = array(
       '#theme' => 'table',
       '#header' => $header,
