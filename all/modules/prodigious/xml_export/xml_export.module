@@ -65,7 +65,7 @@ $types = array('Monthly sales', 'Invoices by client','Cupcakes ranking sales');
         break;
       case 1:
         $header = array('Uid', 'Invoices by client');
-         $query = db_query("SELECT uid, GROUP_CONCAT(order_number, ', ')r FROM commerce_order GROUP BY 1");
+         $query = db_query("SELECT uid, GROUP_CONCAT(order_number SEPARATOR ', ')r FROM commerce_order GROUP BY 1");
 
 
         foreach ($query as $key => $value) {
