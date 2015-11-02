@@ -55,16 +55,17 @@ $types = array('Monthly sales', 'Invoices by client','Cupcakes ranking sales');
 
       case 0:
         $header = array('Montly sales');
-         $resultado = db_query("SELECT * FROM commerce_order");
+        //field_data_commerce_order_total para totales de ordenes
+         $resultado = db_query("SELECT SUM(fa.commerce_order_total_amount) AS total FROM field_data_commerce_order_total AS fa LEFT JOIN commerce_order AS co ON fa.revision_id = co.revision_id WHERE co.status = 'completed' ");
 
         foreach ($resultado as $value) {
-        $rows[] = array($value->order_number, $value->data);
+        $rows[] = array($value->total);
         }
 
         break;
       case 1:
         $header = array('Invoices by client');
-         $query = db_query("SELECT * FROM commerce_order_revision");
+         $query = db_query("SELECT * FROM commerce_order");
 
 
         foreach ($query as $key => $value) {
@@ -74,6 +75,7 @@ $types = array('Monthly sales', 'Invoices by client','Cupcakes ranking sales');
 
         case 2:
         $header = array('Products ranking sales');
+        // commerce_line_item
          $query = db_query("SELECT * FROM commerce_line_item");
         foreach ($query as $key => $value) {
         $rows[] = array($value->order_number, $value->data);
