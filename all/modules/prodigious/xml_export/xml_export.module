@@ -64,12 +64,12 @@ $types = array('Monthly sales', 'Invoices by client','Cupcakes ranking sales');
 
         break;
       case 1:
-        $header = array('Invoices by client');
-         $query = db_query("SELECT * FROM commerce_order");
+        $header = array('Uid', 'Invoices by client');
+         $query = db_query("SELECT uid, GROUP_CONCAT(order_number, ', ')r FROM commerce_order GROUP BY 1");
 
 
         foreach ($query as $key => $value) {
-                $rows[] = array($value->uid, $value->data);
+                $rows[] = array($value->uid, $value->order_number);
         }
         break;
 
